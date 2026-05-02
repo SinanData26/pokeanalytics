@@ -1,6 +1,6 @@
 import requests
 import json
-from config import POKEAPI_BASE_URL
+from explore.config import POKEAPI_BASE_URL
 
 url = "https://pokeapi.co/api/v2/pokemon?limit=10"
 

@@ -5,6 +5,7 @@
 __pycache__/
 *.pyc
 *.pyo
+__init__.py
 
 # =========================
 # Environment variables

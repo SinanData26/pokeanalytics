@@ -1,6 +1,6 @@
 import requests
 import json
-from config import POKEAPI_BASE_URL
+from explore.config import POKEAPI_BASE_URL
 
 url = POKEAPI_BASE_URL
 

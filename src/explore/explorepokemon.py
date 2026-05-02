@@ -1,6 +1,6 @@
 import requests
 import json
-from config import POKEAPI_BASE_URL
+from explore.config import POKEAPI_BASE_URL
 
 url = "https://pokeapi.co/api/v2/pokemon?limit=10"
 
@@ -19,5 +19,4 @@ for p in pokemon_list:
     detail_response = requests.get(detail_url)
     detail_data = detail_response.json()
     
-    print(json.dumps(detail_data, indent=2))
-    break
+    print(detail_data["name"])
