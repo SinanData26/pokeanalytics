@@ -18,7 +18,7 @@ This script represents a simplified but production-aligned ingestion pattern.
 import pandas as pd
 
 from src.utils.pokeapi import get_pokemon_list, get_pokemon_detail
-from src.transforms.pokemon import transform_pokemon
+from src.transforms.pokemon import transform_pokemon # naming too generic - best practice: should be self-explanitory
 from src.services.snowflake_pandas import load_dataframe
 
 
@@ -34,7 +34,7 @@ def main():
     print("🚀 Starting Pokemon ingestion pipeline...")
 
     # 1. Get list of Pokemon
-    pokemon_list = get_pokemon_list(limit=100)
+    pokemon_list = get_pokemon_list(limit=100) # parameter should probably say "page-size"
     print(f"Found {len(pokemon_list)} Pokemon")
 
     records = []

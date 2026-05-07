@@ -21,7 +21,9 @@ def get_pokemon_list(limit: int = 100) -> list:
     Fetch all Pokemon  metadata using pagination.
     Returns name + URL for detail calls.
     Args:
-        Limit: this is the page size
+        Limit: Defines the page-size
+    Returns:
+        A list of dicts of Pokemon details
     """
     
     all_pokemon = []
@@ -34,12 +36,13 @@ def get_pokemon_list(limit: int = 100) -> list:
         
         # Including exception handling
         if response.status_code != 200:
-            raise Exception(f"Failed to fetch Pokémon list: {response.status_code}")
-    
+            raise Exception(f"Failed to fetch Pokémon list: {response.status_code}") # best practice: a good message is one that tells you exactly why it failed
+            # best practice: use logger library: DEBUG, INFO, WARNING, ERROR
+
         data = response.json()
 
         results = data["results"]
-        all_pokemon.extend(results)
+        all_pokemon.extend(results) # append adds a single items, extend adds multiple items
 
         # If no next page -> stop
         if data["next"] is None:

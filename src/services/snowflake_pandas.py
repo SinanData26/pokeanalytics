@@ -48,6 +48,7 @@ def load_dataframe(df: pd.DataFrame):
         # -----------------------------
         # ACTUAL LOAD
         # -----------------------------
+        # using this method is very ineffecient when scalling
         success, nchunks, nrows, _= write_pandas(
             conn=conn, 
             df=df,
