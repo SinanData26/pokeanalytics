@@ -20,6 +20,8 @@ def get_pokemon_list(limit: int = 100) -> list:
     """
     Fetch all Pokemon  metadata using pagination.
     Returns name + URL for detail calls.
+    Args:
+        Limit: this is the page size
     """
     
     all_pokemon = []

@@ -19,7 +19,7 @@ import pandas as pd
 
 from src.utils.pokeapi import get_pokemon_list, get_pokemon_detail
 from src.transforms.pokemon import transform_pokemon
-from src.utils.snowflake import load_dataframe
+from src.services.snowflake_pandas import load_dataframe
 
 
 # -----------------------------
