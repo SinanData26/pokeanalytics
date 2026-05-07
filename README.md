@@ -1,14 +1,43 @@
 # Poké-Analytics Platform
 
-End-to-end data platform built on PokeAPI (https://pokeapi.co/), simulating real-world data engineering workflows including ingestion, transformation, orchestration, and analytics.  The project combines static Pokémon data with dynamically generated datasets to demonstrate incremental processing, data modelling, and production-style pipeline design.
+End-to-end data platform built on PokeAPI (https://pokeapi.co/), simulating real-world data engineering workflows including ingestion, transformation, orchestration, and analytics. The project transforms highly nested Pokémon API data into structured, analytics-ready dimensional models using modern ELT and warehouse design principles.
 
 ## Problem Statement
 
-Pokémon data is publicly available through PokeAPI, but it is fragmented across multiple endpoints, highly nested in semi-structured JSON, and not designed for analytical use. Key information such as Pokémon stats, moves, abilities, and types must be retrieved separately and joined manually, making it difficult to query efficiently or perform meaningful analysis. Additionally, the dataset lacks historical tracking and dynamic updates, limiting the ability to analyse trends over time or support more advanced use cases such as team optimisation or gameplay insights.
+Pokémon data is publicly available through PokeAPI, but it is fragmented across multiple endpoints, highly nested in semi-structured JSON, and not designed for analytical use. Key information such as Pokémon stats, moves, abilities, and types must be retrieved separately and joined manually, making it difficult to query efficiently or perform meaningful analysis.
 
 ## Solution
 
-This project builds an end-to-end data platform that ingests data from PokeAPI, transforms it into structured, analytics-ready models, and enriches it with simulated dynamic datasets to enable time-based analysis. By leveraging a modern data stack including Airbyte, Snowflake, dbt, and Airflow, the platform demonstrates production-style data engineering practices such as incremental processing, data modelling, orchestration, and data quality testing. The final output is a scalable and well-structured data layer designed to power analytics and visualisations for Pokémon-related insights.
+This project builds an end-to-end data platform that ingests data from PokeAPI, transforms it into structured, analytics-ready models. By leveraging a modern data stack including Airbyte, Snowflake, dbt, and Airflow, the platform demonstrates production-style data engineering practices. The final output is a scalable and well-structured data layer designed to power analytics and visualisations for Pokémon-related insights.
+
+## Target Personas
+
+* 'game analysts'
+* 'competitive battlers'
+* 'Pokémon researchers'
+* 'game designers'
+
+## Business Questions
+
+### Pokémon Overview Questions
+
+* Which generation has the most legendary Pokémon?
+* What are the heaviest Pokémon?
+* Which types have the highest average base experience?
+* How many Pokémon exist per type?
+* What percentage are dual-type?
+
+### Competitive/Battle Questions
+
+* Which stats correlate most with base experience?
+* Which types dominate speed?
+* What are the strongest defensive Pokémon?
+* Which abilities appear most frequently?
+
+### Game Design Questions
+* Are newer generations stronger?
+* Did average stats increase over generations?
+* Are legendary Pokémon overpowered?
 
 ## Architecture
 
@@ -63,49 +92,51 @@ This project builds an end-to-end data platform that ingests data from PokeAPI, 
 
 The platform follows a **layered architecture**:
 
-### RAW (Bronze)
+### RAW
 
 * Direct ingestion from PokeAPI
 * Minimal transformation
 * Stores semi-structured JSON
 
-**Examples:**
+**Tables:**
 
 * `pokemon_raw`
 * `moves_raw`
 * `abilities_raw`
+* `species_raw`
+* `sprites_raw`
+* `cries_raw`
 
-### STAGING (Silver)
+### STAGING
 
 * Cleaned and standardised data
 * Flattened JSON structures
 * Renamed and typed columns
 
-**Examples:**
+**Tables:**
 
 * `stg_pokemon`
-* `stg_moves`
-* `stg_types`
+* `stg_pokemon_types`
+* `stg_pokemon_abilities`
+* `stg_pokemon_moves`
+* `stg_pokemon_stats`
+* `stg_pokemon_species`
+* `stg_pokemon_media`
 
-### MARTS (Gold)
+### MARTS
 
 * Business-ready models using a **star schema**
 
 #### Dimension Tables:
 
 * `dim_pokemon`
-* `dim_type`
 * `dim_ability`
+* `dim_moves`
 
 #### Fact Tables:
 
 * `fact_pokemon_stats`
 * `fact_pokemon_moves`
-* `fact_battles` *(simulated dynamic data)*
-
-#### Bridge Tables:
-
-* `bridge_pokemon_types` (many-to-many relationships)
 
 ### Star Schema Benefits
 
@@ -163,44 +194,58 @@ dbt test
 
 ## Lessons Learned
 
-This project demonstrates several key data engineering concepts:
+This project demonstrates several key data engineering and analytics engineering concepts:
 
 ### 📌 Data Modelling
 
-* Designing scalable schemas from nested API data
-* Handling many-to-many relationships
-* Building star schemas for analytics
+* Transforming nested semi-structured API data into relational models
+* Flattening arrays and handling one-to-many relationships
+* Designing dimensional models and star schemas for analytics
+* Building business-focused marts from normalized staging layers
+
+### 📌 ELT & Warehouse Architecture
+
+* Separating RAW, STAGING, and MARTS layers
+* Storing raw JSON data for traceability and reprocessing
+* Using SQL-based transformations to create analytics-ready datasets
+* Applying modern ELT design principles using Snowflake and dbt
+
+### 📌 Data Transformation
+
+* Parsing and flattening nested JSON structures
+* Standardising datatypes and naming conventions
+* Creating reusable transformation models in dbt
+* Managing joins across multiple API endpoints
 
 ### 📌 Orchestration
 
-* Managing dependencies between ingestion and transformation
-* Implementing retries and failure handling
-* Scheduling pipelines effectively
-
-### 📌 Incremental Processing
-
-* Avoiding full reloads
-* Processing only new or updated data
-* Designing idempotent pipelines
+* Coordinating ingestion and transformation workflows
+* Managing task dependencies between pipeline stages
+* Scheduling and automating data refresh processes
 
 ### 📌 Real-World Tradeoffs
 
-* Handling static vs dynamic datasets
-* Deciding what data to store vs reference (e.g. media URLs)
-* Balancing simplicity vs scalability
+* Deciding how much source data to model
+* Balancing normalization in staging vs denormalization in marts
+* Designing models around analytical use cases rather than source structure
+* Keeping the platform scalable while maintaining simplicity
 
 ### 📌 Tooling & Architecture
 
-* Integrating multiple tools into one cohesive system
-* Understanding the role of each component in the data stack
+* Integrating APIs, Snowflake, dbt, orchestration, and BI tooling into a cohesive platform
+* Understanding the role of each layer in a modern analytics stack
+* Building modular and maintainable data pipelines
 
 ## 🚀 Future Improvements
 
-* Add real-time data ingestion
-* Enhance battle simulation logic
-* Implement CI/CD pipelines
-* Add data quality monitoring
-* Expand BI dashboards
+* Add incremental loading strategies for API ingestion
+* Introduce historical snapshot tracking for slowly changing data
+* Expand dimensional models with additional Pokémon endpoints
+* Implement automated data quality testing and monitoring
+* Add CI/CD pipelines for deployment automation
+* Enhance Power BI dashboards and analytical use cases
+* Add orchestration monitoring and alerting
+* Explore streaming or near real-time ingestion patterns
 
 ## Contact
 
