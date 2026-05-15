@@ -17,9 +17,9 @@ This script represents a simplified but production-aligned ingestion pattern.
 
 import pandas as pd
 
-from src.utils.pokeapi import get_pokemon_list, get_pokemon_detail
-from src.transforms.pokemon import transform_pokemon # naming too generic - best practice: should be self-explanitory
-from src.services.snowflake_pandas import load_dataframe
+from python_legacy_ingestion.utils.call_pokeapi import get_pokemon_list, get_pokemon_detail
+from python_legacy_ingestion.transforms.pokemon import transform_pokemon # naming too generic - best practice: should be self-explanitory
+from python_legacy_ingestion.prototypes.snowflake_pandas import load_dataframe
 
 
 # -----------------------------

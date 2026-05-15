@@ -1,21 +1,37 @@
+#----------------------------------------------------------------
+# NOTES TO SELF 
+# 
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+# --- denotes in-line notes to self
+#----------------------------------------------------------------
+
+
+
 """
 Snowflake service module (RAW JSON / VARIANT version).
 
-This module is responsible ONLY for:
+This module is responsible for:
 - Creating Snowflake connections
 - Loading raw JSON data into Snowflake
 
-Design principles:
-- No business logic
-- No transformations
-- Accept raw Python dicts and persist them as JSON
-
 This supports modern ELT architecture:
-Python (EL) → Snowflake (RAW) → dbt (T)
+Python (EL) → Snowflake (RAW)
 """
 
 import os
 import json
+import uuid
+from python_legacy_ingestion.utils.config import base_url
+from python_legacy_ingestion.utils.config import pokemon_endpoint
 import snowflake.connector
 from dotenv import load_dotenv
 
@@ -43,7 +59,7 @@ def get_connection():
 # -----------------------------
 # RAW JSON LOAD (ROW-BY-ROW)
 # -----------------------------
-def load_raw_json(records):
+def load_raw_json(endpoint: str, table: str, records):
     """
     Load raw JSON records into Snowflake VARIANT column.
 
@@ -58,50 +74,40 @@ def load_raw_json(records):
 
     conn = get_connection()
     cursor = conn.cursor()
-
-    table = os.getenv("SNOWFLAKE_TABLE_JSON")
-
+    
     insert_query = f"""
-        INSERT INTO {table} (ingest_at, source, raw_data)
-        SELECT CURRENT_TIMESTAMP, %s, PARSE_JSON(%s)
+        INSERT INTO {table} 
+            (ingestion_id, ingested_at, source, endpoint, record_id, record_name, raw_results)
+        SELECT 
+            %s, CURRENT_TIMESTAMP, %s, %s, %s, %s, PARSE_JSON(%s)
     """
+
+    ingestion_id = str(uuid.uuid4())
 
     try:
         for record in records:
+            
+            record_id = record["id"]
+            record_name = record["name"]
+
             cursor.execute(
                 insert_query,
                 (
-                    "pokeapi",
+                    ingestion_id,
+                    base_url,
+                    endpoint,
+                    record_id,
+                    record_name,
                     json.dumps(record)  # dict → JSON string
                 )
             )
 
-        print(f"✅ Inserted {len(records)} raw JSON records into {table}")
+        print(f"✅ Inserted {len(records)} raw JSON record(s) into {table}")
+        print(f"📦 ingestion_id: {ingestion_id}")
 
     except Exception as e:
         print(f"❌ Error during raw JSON insert: {e}")
         raise
-
-    finally:
-        cursor.close()
-        conn.close()
-
-
-# -----------------------------
-# TEST FUNCTION
-# -----------------------------
-def test_connection():
-    """
-    Simple test to validate Snowflake connectivity.
-    """
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute("SELECT CURRENT_VERSION()")
-        version = cursor.fetchone()
-        print(f"✅ Connected to Snowflake: {version[0]}")
 
     finally:
         cursor.close()

@@ -12,10 +12,10 @@ This project builds an end-to-end data platform that ingests data from PokeAPI, 
 
 ## Target Personas
 
-* 'game analysts'
-* 'competitive battlers'
-* 'Pokémon researchers'
-* 'game designers'
+* game analysts
+* competitive battlers
+* Pokémon researchers
+* game designers
 
 ## Business Questions
 
@@ -100,12 +100,11 @@ The platform follows a **layered architecture**:
 
 **Tables:**
 
+* `pokemon_species_raw`
 * `pokemon_raw`
+* `evolution_chain_raw`
 * `moves_raw`
 * `abilities_raw`
-* `species_raw`
-* `sprites_raw`
-* `cries_raw`
 
 ### STAGING
 
@@ -115,12 +114,11 @@ The platform follows a **layered architecture**:
 
 **Tables:**
 
-* `stg_pokemon`
-* `stg_pokemon_types`
-* `stg_pokemon_abilities`
-* `stg_pokemon_moves`
-* `stg_pokemon_stats`
 * `stg_pokemon_species`
+* `stg_pokemon`
+* `stg_pokemon_moves`
+* `stg_pokemon_abilities`
+* `stg_pokemon_stats`
 * `stg_pokemon_media`
 
 ### MARTS
@@ -129,14 +127,14 @@ The platform follows a **layered architecture**:
 
 #### Dimension Tables:
 
+* `dim_pokemon_species`
 * `dim_pokemon`
 * `dim_ability`
-* `dim_moves`
+* `dim_move`
 
 #### Fact Tables:
 
 * `fact_pokemon_stats`
-* `fact_pokemon_moves`
 
 ### Star Schema Benefits
 
